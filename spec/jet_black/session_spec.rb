@@ -1,6 +1,9 @@
 require "jet_black/session"
+require "support/environment_support"
 
 RSpec.describe JetBlack::Session do
+  include EnvironmentSupport
+
   describe "#run" do
     it "captures the stdout" do
       command = subject.run("echo foo")
@@ -41,6 +44,22 @@ RSpec.describe JetBlack::Session do
       command_2 = subject.run("echo 456")
 
       expect(subject.commands).to eq [command_1, command_2]
+    end
+
+    it "allows environment overrides without affecting the current process" do
+      with_environment("FOO" => "bar") do
+        expect(ENV["FOO"]).to eq "bar"
+
+        plain_command = subject.run("echo $FOO")
+        expect(plain_command.stdout).to eq "bar"
+
+        expect(ENV["FOO"]).to eq "bar"
+
+        modified_env_command = subject.run("echo $FOO", env: { "FOO" => "123" })
+        expect(modified_env_command.stdout).to eq "123"
+
+        expect(ENV["FOO"]).to eq "bar"
+      end
     end
   end
 

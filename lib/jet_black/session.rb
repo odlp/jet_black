@@ -11,8 +11,8 @@ module JetBlack
       @commands = []
     end
 
-    def run(raw_command)
-      executed_command = run_command(raw_command)
+    def run(raw_command, env: {})
+      executed_command = run_command(raw_command, env)
       commands << executed_command
       executed_command
     end
@@ -23,9 +23,9 @@ module JetBlack
 
     private
 
-    def run_command(raw_command)
+    def run_command(raw_command, env)
       Dir.chdir(directory) do
-        stdout, stderr, exit_status = Open3.capture3(raw_command)
+        stdout, stderr, exit_status = Open3.capture3(env, raw_command)
         ExecutedCommand.new(
           raw_command,
           stdout.chomp,
