@@ -45,19 +45,35 @@ RSpec.describe JetBlack::Session, "#run" do
     expect(subject.commands).to eq [command_1, command_2]
   end
 
-  it "allows environment overrides without affecting the current process" do
-    with_environment("FOO" => "bar") do
-      expect(ENV["FOO"]).to eq "bar"
+  describe "environment" do
+    it "allows overrides without affecting the current process" do
+      with_environment("FOO" => "bar") do
+        expect(ENV["FOO"]).to eq "bar"
 
-      plain_command = subject.run("echo $FOO")
-      expect(plain_command.stdout).to eq "bar"
+        plain_command = subject.run("echo $FOO")
+        expect(plain_command.stdout).to eq "bar"
 
-      expect(ENV["FOO"]).to eq "bar"
+        expect(ENV["FOO"]).to eq "bar"
 
-      modified_env_command = subject.run("echo $FOO", env: { "FOO" => "123" })
-      expect(modified_env_command.stdout).to eq "123"
+        modified_env_command = subject.run("echo $FOO", env: { "FOO" => "123" })
+        expect(modified_env_command.stdout).to eq "123"
 
-      expect(ENV["FOO"]).to eq "bar"
+        expect(ENV["FOO"]).to eq "bar"
+      end
+    end
+
+    it "allows overrides with symbol keys" do
+      command = subject.run("echo $FOO", env: { FOO: "bar" })
+
+      expect(command.stdout).to eq "bar"
+    end
+
+    it "allows overrides with non-string values" do
+      command_1 = subject.run("echo $FOO", env: { "FOO" => 123 })
+      expect(command_1.stdout).to eq "123"
+
+      command_2 = subject.run("echo $FOO", env: { "FOO" => :bar })
+      expect(command_2.stdout).to eq "bar"
     end
   end
 end

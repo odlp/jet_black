@@ -23,7 +23,9 @@ module JetBlack
 
     private
 
-    def run_command(raw_command, env)
+    def run_command(raw_command, raw_env)
+      env = stringify_env(raw_env)
+
       Dir.chdir(directory) do
         stdout, stderr, exit_status = Open3.capture3(env, raw_command)
         ExecutedCommand.new(
@@ -33,6 +35,12 @@ module JetBlack
           exit_status.to_i,
         )
       end
+    end
+
+    def stringify_env(env)
+      env.map do |key, value|
+        [key.to_s, value.to_s]
+      end.to_h
     end
 
     ExecutedCommand = Struct.new(:raw_command, :stdout, :stderr, :exit_status)
