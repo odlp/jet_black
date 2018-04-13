@@ -1,11 +1,50 @@
 require "jet_black/session"
 
 RSpec.describe JetBlack::Session do
+  describe "#run" do
+    it "captures the stdout" do
+      command = subject.run("echo foo")
+
+      expect(command.stdout).to eq "foo"
+      expect(command.stderr).to be_empty
+    end
+
+    it "captures the stderr" do
+      command = subject.run("echo foo 1>&2")
+
+      expect(command.stderr).to eq "foo"
+      expect(command.stdout).to be_empty
+    end
+
+    it "captures the exit status" do
+      expect(subject.run("echo 123").exit_status).to eq 0
+      expect(subject.run("! echo 123").exit_status).to be > 0
+    end
+
+    it "switches to the working directory" do
+      executed_command = subject.run("pwd")
+
+      expect(executed_command.stdout).to eq subject.directory
+    end
+
+    it "maintains a history of commands" do
+      expect(subject.commands).to be_empty
+
+      command_1 = subject.run("echo 123")
+      command_2 = subject.run("echo 456")
+
+      expect(subject.commands).to eq [command_1, command_2]
+    end
+  end
+
   describe "#directory" do
     it "is within the temporary directory" do
       tmp_directory = `echo $TMPDIR`.chomp
 
-      expect(subject.directory).to start_with tmp_directory
+      # On MacOS /var/x can be a symlink to /private/var/x
+      resolved_tmp_directory = File.realpath(tmp_directory)
+
+      expect(subject.directory).to start_with resolved_tmp_directory
     end
 
     it "re-uses the same directory within a session" do
