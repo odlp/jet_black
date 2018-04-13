@@ -27,6 +27,7 @@ module JetBlack
       Dir.chdir(directory) do
         stdout, stderr, exit_status = Open3.capture3(raw_command)
         ExecutedCommand.new(
+          raw_command,
           stdout.chomp,
           stderr.chomp,
           exit_status.to_i,
@@ -34,6 +35,6 @@ module JetBlack
       end
     end
 
-    ExecutedCommand = Struct.new(:stdout, :stderr, :exit_status)
+    ExecutedCommand = Struct.new(:raw_command, :stdout, :stderr, :exit_status)
   end
 end

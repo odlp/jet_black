@@ -27,6 +27,13 @@ RSpec.describe JetBlack::Session do
       expect(executed_command.stdout).to eq subject.directory
     end
 
+    it "records the command executed" do
+      raw_command = "echo foo"
+      executed_command = subject.run(raw_command)
+
+      expect(executed_command.raw_command).to eq raw_command
+    end
+
     it "maintains a history of commands" do
       expect(subject.commands).to be_empty
 
