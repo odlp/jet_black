@@ -1,7 +1,8 @@
 # frozen_string_literal: true
 
-require "tmpdir"
 require "open3"
+require "tmpdir"
+require_relative "executed_command"
 
 module JetBlack
   class Session
@@ -29,10 +30,10 @@ module JetBlack
       Dir.chdir(directory) do
         stdout, stderr, exit_status = Open3.capture3(env, raw_command)
         ExecutedCommand.new(
-          raw_command,
-          stdout.chomp,
-          stderr.chomp,
-          exit_status.to_i,
+          raw_command: raw_command,
+          stdout: stdout,
+          stderr: stderr,
+          exit_status: exit_status,
         )
       end
     end
@@ -42,7 +43,5 @@ module JetBlack
         [key.to_s, value.to_s]
       end.to_h
     end
-
-    ExecutedCommand = Struct.new(:raw_command, :stdout, :stderr, :exit_status)
   end
 end
