@@ -93,7 +93,7 @@ module JetBlack
 
     def command_context(options)
       if options[:clean_bundler_env]
-        Bundler.with_original_env { yield }
+        Bundler.with_clean_env { yield }
       else
         yield
       end

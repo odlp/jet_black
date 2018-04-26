@@ -9,14 +9,14 @@ RSpec.describe JetBlack::Session, "#create_file" do
     FILE
 
     subject.create_file("foo.txt", file_content)
-    read_file_content = subject.run("less foo.txt").stdout
+    read_file_content = subject.run("cat foo.txt").stdout
 
     expect(read_file_content).to match file_content.chomp
   end
 
   it "creates sub-directories if required" do
     subject.create_file("sub/foo.txt", "bar baz")
-    read_file_content = subject.run("less sub/foo.txt").stdout
+    read_file_content = subject.run("cat sub/foo.txt").stdout
 
     expect(read_file_content).to match "bar baz"
   end

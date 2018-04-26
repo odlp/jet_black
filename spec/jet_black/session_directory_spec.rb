@@ -7,7 +7,8 @@ RSpec.describe JetBlack::Session, "#directory" do
     # On MacOS /var/x can be a symlink to /private/var/x
     resolved_tmp_directory = File.realpath(tmp_directory)
 
-    expect(subject.directory).to start_with resolved_tmp_directory
+    expect(subject.directory).to start_with("/tmp/").
+      or(start_with(resolved_tmp_directory))
   end
 
   it "re-uses the same directory within a session" do
