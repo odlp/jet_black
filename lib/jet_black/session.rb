@@ -39,6 +39,18 @@ module JetBlack
       File.write(expanded_file_path, file_content)
     end
 
+    def append_to_file(file_path, append_content)
+      expanded_file_path = File.expand_path(file_path, directory)
+
+      unless File.exist?(expanded_file_path)
+        raise JetBlack::NonExistentFileError.new(file_path, expanded_file_path)
+      end
+
+      File.open(expanded_file_path, "a") do |file|
+        file.write(append_content)
+      end
+    end
+
     def copy_fixture(source_path, destination_path)
       src_fixture_dir = JetBlack.configuration.fixture_directory
       expanded_source_path = File.expand_path(source_path, src_fixture_dir)
