@@ -3,6 +3,7 @@
 require "fileutils"
 require "open3"
 require "tmpdir"
+require_relative "environment"
 require_relative "errors"
 require_relative "executed_command"
 
@@ -59,7 +60,7 @@ module JetBlack
     private
 
     def run_command(raw_command, raw_env)
-      env = prepare_env(raw_env)
+      env = Environment.new(raw_env).to_h
 
       Dir.chdir(directory) do
         stdout, stderr, exit_status = Open3.capture3(env, raw_command)
@@ -70,31 +71,6 @@ module JetBlack
           exit_status: exit_status,
         )
       end
-    end
-
-    def prepare_env(env)
-      apply_path_prefix(
-        stringify_env(env.dup)
-      )
-    end
-
-    def stringify_env(env)
-      env.map do |key, value|
-        [key.to_s, value.to_s]
-      end.to_h
-    end
-
-    def apply_path_prefix(env)
-      if path_prefix&.empty?
-        env
-      else
-        env["PATH"] = [path_prefix, ENV["PATH"]].join(File::PATH_SEPARATOR)
-        env
-      end
-    end
-
-    def path_prefix
-      JetBlack.configuration.path_prefix
     end
   end
 end
