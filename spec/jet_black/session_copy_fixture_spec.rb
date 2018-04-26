@@ -1,6 +1,10 @@
 require "jet_black"
 
 RSpec.describe JetBlack::Session, "#copy_fixture" do
+  after do
+    JetBlack.reset!
+  end
+
   it "copies the fixture file to the working directory" do
     configure_fixture_directory(File.expand_path("../fixtures", __dir__))
 

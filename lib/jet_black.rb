@@ -10,4 +10,8 @@ module JetBlack
   def self.configure
     yield configuration if block_given?
   end
+
+  def self.reset!
+    @configuration = Configuration.new
+  end
 end
