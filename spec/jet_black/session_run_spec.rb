@@ -1,4 +1,4 @@
-require "jet_black/session"
+require "jet_black"
 require "support/environment_support"
 
 RSpec.describe JetBlack::Session, "#run" do
@@ -74,6 +74,17 @@ RSpec.describe JetBlack::Session, "#run" do
 
       command_2 = subject.run("echo $FOO", env: { "FOO" => :bar })
       expect(command_2.stdout).to eq "bar"
+    end
+
+    it "allows a clean environment without Bundler variables" do
+      expect(ENV["BUNDLE_GEMFILE"]).to_not be_empty
+
+      default_command = subject.run("echo $BUNDLE_GEMFILE")
+      expect(default_command.stdout).to eq ENV["BUNDLE_GEMFILE"]
+
+      options = { clean_bundler_env: true }
+      clean_command = subject.run("echo $BUNDLE_GEMFILE", options: options)
+      expect(clean_command.stdout).to be_empty
     end
   end
 end

@@ -15,8 +15,8 @@ module JetBlack
       @commands = []
     end
 
-    def run(raw_command, env: {})
-      executed_command = run_command(raw_command, env)
+    def run(command, env: {}, options: {})
+      executed_command = exec_command(command, env, options)
       commands << executed_command
       executed_command
     end
@@ -59,17 +59,27 @@ module JetBlack
 
     private
 
-    def run_command(raw_command, raw_env)
+    def exec_command(raw_command, raw_env, options)
       env = Environment.new(raw_env).to_h
 
-      Dir.chdir(directory) do
-        stdout, stderr, exit_status = Open3.capture3(env, raw_command)
+      command_context(options) do
+        stdout, stderr, exit_status =
+          Open3.capture3(env, raw_command, chdir: directory)
+
         ExecutedCommand.new(
           raw_command: raw_command,
           stdout: stdout,
           stderr: stderr,
           exit_status: exit_status,
         )
+      end
+    end
+
+    def command_context(options)
+      if options[:clean_bundler_env]
+        Bundler.with_original_env { yield }
+      else
+        yield
       end
     end
   end
