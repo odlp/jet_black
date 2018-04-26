@@ -36,6 +36,26 @@ module JetBlack
       File.write(expanded_file_path, file_content)
     end
 
+    def copy_fixture(source_path, destination_path)
+      src_fixture_dir = JetBlack.configuration.fixture_directory
+      expanded_source_path = File.expand_path(source_path, src_fixture_dir)
+      expanded_destination_path = File.expand_path(destination_path, directory)
+      expanded_destination_dir = File.dirname(expanded_destination_path)
+
+      if src_fixture_dir.nil?
+        raise Error.new("Please configure the fixture_directory")
+      end
+
+      unless expanded_destination_path.start_with?(directory)
+        raise JetBlack::InvalidPathError.new(
+          destination_path, expanded_destination_path
+        )
+      end
+
+      FileUtils.mkdir_p(expanded_destination_dir)
+      FileUtils.cp(expanded_source_path, expanded_destination_path)
+    end
+
     private
 
     def run_command(raw_command, raw_env)
