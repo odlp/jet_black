@@ -1,5 +1,7 @@
 # JetBlack
 
+[![CircleCI](https://circleci.com/gh/odlp/jet_black.svg?style=svg)](https://circleci.com/gh/odlp/jet_black)
+
 A black-box testing utility for Ruby. Features:
 
 - Each session runs in a temporary directory
