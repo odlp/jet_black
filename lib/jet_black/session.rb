@@ -11,12 +11,14 @@ module JetBlack
   class Session
     attr_reader :commands
 
-    def initialize
+    def initialize(options: {})
       @commands = []
+      @session_options = options
     end
 
     def run(command, env: {}, options: {})
-      executed_command = exec_command(command, env, options)
+      combined_options = session_options.merge(options)
+      executed_command = exec_command(command, env, combined_options)
       commands << executed_command
       executed_command
     end
@@ -58,6 +60,8 @@ module JetBlack
     end
 
     private
+
+    attr_reader :session_options
 
     def exec_command(raw_command, raw_env, options)
       env = Environment.new(raw_env).to_h

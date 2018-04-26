@@ -76,15 +76,34 @@ RSpec.describe JetBlack::Session, "#run" do
       expect(command_2.stdout).to eq "bar"
     end
 
-    it "allows a clean environment without Bundler variables" do
-      expect(ENV["BUNDLE_GEMFILE"]).to_not be_empty
+    describe "clean_bundler_env option" do
+      it "allows a clean environment without Bundler variables" do
+        expect(ENV["BUNDLE_GEMFILE"]).to_not be_empty
 
-      default_command = subject.run("echo $BUNDLE_GEMFILE")
-      expect(default_command.stdout).to eq ENV["BUNDLE_GEMFILE"]
+        default_command = subject.run("echo $BUNDLE_GEMFILE")
+        expect(default_command.stdout).to eq ENV["BUNDLE_GEMFILE"]
 
-      options = { clean_bundler_env: true }
-      clean_command = subject.run("echo $BUNDLE_GEMFILE", options: options)
-      expect(clean_command.stdout).to be_empty
+        options = { clean_bundler_env: true }
+        clean_command = subject.run("echo $BUNDLE_GEMFILE", options: options)
+        expect(clean_command.stdout).to be_empty
+      end
+
+      it "allows the option to specified for the whole session" do
+        session = described_class.new(options: { clean_bundler_env: true })
+        clean_command = session.run("echo $BUNDLE_GEMFILE")
+
+        expect(clean_command.stdout).to be_empty
+      end
+
+      it "allows the option to be overriden for a specific command" do
+        session = described_class.new(options: { clean_bundler_env: true })
+
+        command = session.run(
+          "echo $BUNDLE_GEMFILE", options: { clean_bundler_env: false }
+        )
+
+        expect(command.stdout).to eq ENV["BUNDLE_GEMFILE"]
+      end
     end
   end
 end
