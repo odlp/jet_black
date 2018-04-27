@@ -4,6 +4,16 @@ require "jet_black/rspec/matchers"
 RSpec.describe JetBlack::RSpec::Matchers do
   include described_class
 
+  it "allows chaining of matchers" do
+    result = executed_command(exit_status: 0, stdout: "foo", stderr: "bar")
+
+    expect(result).to(
+      be_a_success.
+      and have_stdout("foo").
+      and have_stderr("bar")
+    )
+  end
+
   describe "#have_stdout" do
     it "matches with a regex" do
       expect(executed_command(stdout: "foo bar")).to have_stdout(/bar/)
@@ -78,12 +88,12 @@ RSpec.describe JetBlack::RSpec::Matchers do
 
   private
 
-  def executed_command(stdout: "", stderr: "")
+  def executed_command(exit_status: 0, stdout: "", stderr: "")
     JetBlack::ExecutedCommand.new(
       raw_command: "",
       stdout: stdout,
       stderr: stderr,
-      exit_status: 0,
+      exit_status: exit_status,
     )
   end
 end
