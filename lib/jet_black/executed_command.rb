@@ -8,5 +8,13 @@ module JetBlack
       @stderr = stderr.chomp
       @exit_status = exit_status.to_i
     end
+
+    def success?
+      exit_status.zero?
+    end
+
+    def failure?
+      !success?
+    end
   end
 end
