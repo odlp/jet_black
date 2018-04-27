@@ -5,7 +5,7 @@ RSpec.describe JetBlack::Session, "path prefix" do
     JetBlack.reset!
   end
 
-  let(:gem_bin_path) { File.expand_path("../../bin", __dir__) }
+  let(:gem_bin_path) { File.expand_path("../../../bin", __dir__) }
 
   it "allows paths to be prefixed to the current path" do
     JetBlack.configuration.path_prefix = gem_bin_path

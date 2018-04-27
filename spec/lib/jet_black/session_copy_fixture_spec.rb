@@ -5,8 +5,10 @@ RSpec.describe JetBlack::Session, "#copy_fixture" do
     JetBlack.reset!
   end
 
+  let(:fixtures_dir) { File.expand_path("../../fixtures", __dir__) }
+
   it "copies the fixture file to the working directory" do
-    configure_fixture_directory(File.expand_path("../fixtures", __dir__))
+    configure_fixture_directory(fixtures_dir)
 
     subject.copy_fixture("a-original.txt", "a-copied.txt")
     fixture_content = subject.run("cat a-copied.txt").stdout
@@ -15,7 +17,7 @@ RSpec.describe JetBlack::Session, "#copy_fixture" do
   end
 
   it "creates sub-directories if required" do
-    configure_fixture_directory(File.expand_path("../fixtures", __dir__))
+    configure_fixture_directory(fixtures_dir)
 
     subject.copy_fixture("a-original.txt", "nested/deep/a-copied.txt")
     fixture_content = subject.run("cat nested/deep/a-copied.txt").stdout
@@ -24,7 +26,7 @@ RSpec.describe JetBlack::Session, "#copy_fixture" do
   end
 
   it "raises an error trying to write a file outside the working directory" do
-    configure_fixture_directory(File.expand_path("../fixtures", __dir__))
+    configure_fixture_directory(fixtures_dir)
 
     copy_file_to_outside_tmp_dir = Proc.new do
       subject.copy_fixture("a-original.txt", "../a-copied.txt")
