@@ -4,11 +4,11 @@
 
 A black-box testing utility for command line tools, written in Ruby. Features:
 
-- Each session is within a unique temporary directory, outside the project
+- Each session takes place within a unique temporary directory, outside the project
 - Synchronously run commands then write assertions on the:
   - `stdout` / `stderr` content
   - exit status of the process
-- Convenient manipulate files in the temporary directory:
+- Conveniently manipulate files in the temporary directory:
   - Create files
   - Append content to files
   - Copy fixture files from your project
@@ -173,6 +173,7 @@ Configure the `path_prefix` to the directory containing with your executable(s):
 
 ```ruby
 # spec/support/jet_black.rb
+
 require "jet_black"
 
 JetBlack.configure do |config|
@@ -184,8 +185,6 @@ Then the `$PATH` of each session will include the configured directory, and your
 executable should be invokable:
 
 ```ruby
-require "jet_black"
-
 JetBlack::Session.new.run("my_awesome_bin")
 ```
 
