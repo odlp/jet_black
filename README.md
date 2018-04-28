@@ -16,7 +16,7 @@ with [RSpec] in mind. Features:
   - [Append content to files](#file-manipulation)
   - [Copy fixture files](#copying-fixture-files) from your project
 - Modify the environment without modifying the parent test process:
-  - [Override environment variables](#environment-overrides)
+  - [Override environment variables](#environment-variable-overrides)
   - [Escape the current Bundler context](#clean-bundler-environment)
   - [Adjust `$PATH`](#path-prefix) to include your executable / Subject Under Test
 - [RSpec matchers](#rspec-matchers) (optional)
@@ -130,7 +130,7 @@ session.copy_fixture("src-config.json", "config.json")
 session.copy_fixture("src-config.json", "config/config.json")
 ```
 
-### Environment overrides
+### Environment variable overrides
 
 ```ruby
 require "jet_black"
