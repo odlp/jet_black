@@ -143,10 +143,10 @@ result.stdout # => "bar"
 
 ### Clean Bundler environment
 
-If the test suite is invoked with Bundler (e.g. `bundle exec rspec`) but you
-want to run commands like `bundle install` and `bundle exec` with a different
-Gemfile in a given spec, you can configure the session or individual commands to
-run with a clean Bundler environment.
+If your project's test suite is invoked with Bundler (e.g. `bundle exec rspec`)
+but you want to run commands like `bundle install` and `bundle exec` with a
+different Gemfile in a given spec, you can configure the session or individual
+commands to run with a clean Bundler environment.
 
 ```ruby
 require "jet_black"
