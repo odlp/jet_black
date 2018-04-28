@@ -30,6 +30,8 @@ group :test do
 end
 ```
 
+### RSpec setup
+
 If you're using RSpec, you can load matchers with the following require
 (optional):
 
@@ -40,8 +42,20 @@ require "jet_black/rspec"
 ```
 
 Any specs you write in the `spec/black_box` folder will then have an inferred
-`:black_box` meta type, and the matchers will be available in the example
-contexts.
+`:black_box` meta type, and the matchers will be available in those examples.
+
+Alternatively you can manually include the matchers:
+
+```ruby
+# spec/cli/example_spec.rb
+
+require "jet_black"
+require "jet_black/rspec/matchers"
+
+RSpec.describe "my command line tool" do
+  include JetBlack::RSpec::Matchers
+end
+```
 
 ## Usage
 
@@ -107,7 +121,7 @@ Or in `spec/spec_helper.rb` the directory would be resolved as:
 File.expand_path("fixtures/black_box", __dir__)
 ```
 
-Now you can copy fixtures across into the temporary directory:
+Now you can copy fixtures across into a session's temporary directory:
 
 ```ruby
 require "jet_black"
@@ -173,4 +187,63 @@ executable should be invokable:
 require "jet_black"
 
 JetBlack::Session.new.run("my_awesome_bin")
+```
+
+### RSpec matchers
+
+Given the [RSpec setup](#rspec-setup) is configured, you'll have access to the
+following matchers:
+
+- `have_stdout` which accepts a string or regular expression
+- `have_stderr` which accepts a string or regular expression
+- `have_no_stdout` which asserts the `stdout` is empty
+- `have_no_stderr` which asserts the `stderr` is empty
+
+And the following predicate matchers:
+
+- `be_a_success` / `be_success` asserts the exit status was zero
+- `be_a_failure` / `be_failure` asserts the exit status was not zero
+
+#### Example assertions
+
+```ruby
+require "jet_black"
+
+RSpec.describe "my command line tool" do
+  let(:session) { JetBlack::Session.new }
+
+  it "does the work" do
+    expect(session.run("my_tool --good")).
+      to be_a_success.and have_stdout(/It worked/)
+  end
+
+  it "explodes with incorrect arguments" do
+    expect(session.run("my_tool --bad")).
+      to be_a_failure.and have_stdout("Oh no!")
+  end
+end
+```
+
+However these assertions can be made with built-in matchers too:
+
+```ruby
+require "jet_black"
+
+RSpec.describe "my command line tool" do
+  let(:session) { JetBlack::Session.new }
+
+  it "does the work" do
+    result = session.run("my_tool --good")
+
+    expect(result.stdout).to match(/It worked/)
+    expect(result.exit_status).to eq 0
+  end
+
+  it "explodes with incorrect arguments" do
+    result = session.run("my_tool --bad")
+
+    expect(result.stdout).to match("Oh no!")
+    expect(result.exit_status).to eq 1
+  end
+end
 ```
