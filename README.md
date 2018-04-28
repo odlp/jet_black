@@ -2,24 +2,24 @@
 
 [![CircleCI](https://circleci.com/gh/odlp/jet_black.svg?style=svg)](https://circleci.com/gh/odlp/jet_black)
 
-A black-box testing utility for command line tools. Written in Ruby, with
-[RSpec] in mind. Features:
+A black-box testing utility for command line tools and gems. Written in Ruby,
+with [RSpec] in mind. Features:
 
 [RSpec]: http://rspec.info/
 
 - Each session takes place within a unique temporary directory, outside the project
-- Synchronously run commands then write assertions on the:
+- Synchronously [run commands](#running-commands) then write assertions on the:
   - `stdout` / `stderr` content
   - exit status of the process
 - Conveniently manipulate files in the temporary directory:
-  - Create files
-  - Append content to files
-  - Copy fixture files from your project
+  - [Create files](#file-manipulation)
+  - [Append content to files](#file-manipulation)
+  - [Copy fixture files](#copying-fixture-files) from your project
 - Modify the environment without modifying the parent test process:
-  - Override environment variables
-  - Escape the current Bundler context
-  - Adjust `$PATH` to include your executable / Subject Under Test
-- RSpec matchers (optional)
+  - [Override environment variables](#environment-overrides)
+  - [Escape the current Bundler context](#clean-bundler-environment)
+  - [Adjust `$PATH`](#path-prefix) to include your executable / Subject Under Test
+- [RSpec matchers](#rspec-matchers) (optional)
 
 The temporary directory is discarded after each spec. This means you can write
 & modify files and run commands (like `git init`) without worrying about tidying
