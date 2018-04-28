@@ -218,7 +218,7 @@ RSpec.describe "my command line tool" do
 
   it "explodes with incorrect arguments" do
     expect(session.run("my_tool --bad")).
-      to be_a_failure.and have_stdout("Oh no!")
+      to be_a_failure.and have_stderr("Oh no!")
   end
 end
 ```
@@ -241,7 +241,7 @@ RSpec.describe "my command line tool" do
   it "explodes with incorrect arguments" do
     result = session.run("my_tool --bad")
 
-    expect(result.stdout).to match("Oh no!")
+    expect(result.stderr).to match("Oh no!")
     expect(result.exit_status).to eq 1
   end
 end
