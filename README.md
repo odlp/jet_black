@@ -2,7 +2,10 @@
 
 [![CircleCI](https://circleci.com/gh/odlp/jet_black.svg?style=svg)](https://circleci.com/gh/odlp/jet_black)
 
-A black-box testing utility for command line tools, written in Ruby. Features:
+A black-box testing utility for command line tools. Written in Ruby, with
+[RSpec] in mind. Features:
+
+[RSpec]: http://rspec.info/
 
 - Each session takes place within a unique temporary directory, outside the project
 - Synchronously run commands then write assertions on the:
@@ -115,12 +118,6 @@ JetBlack.configure do |config|
 end
 ```
 
-Or in `spec/spec_helper.rb` the directory would be resolved as:
-
-```ruby
-File.expand_path("fixtures/black_box", __dir__)
-```
-
 Now you can copy fixtures across into a session's temporary directory:
 
 ```ruby
@@ -206,6 +203,8 @@ And the following predicate matchers:
 #### Example assertions
 
 ```ruby
+# spec/black_box/cli_spec.rb
+
 require "jet_black"
 
 RSpec.describe "my command line tool" do
