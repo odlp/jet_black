@@ -3,7 +3,9 @@ SPEC_ROOT = File.expand_path(__dir__).freeze
 
 if ENV.key?("ENABLE_COVERAGE")
   require "simplecov"
-  SimpleCov.start
+  SimpleCov.start do
+    add_filter "/spec/"
+  end
 end
 
 if ENV.key?("COVERALLS_REPO_TOKEN")
