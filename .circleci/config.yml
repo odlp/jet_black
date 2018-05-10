@@ -2,7 +2,9 @@ version: 2
 jobs:
   build:
     docker:
-       - image: circleci/ruby:2.5
+      - image: circleci/ruby:2.5
+    environment:
+      ENABLE_COVERAGE: 1
 
     working_directory: ~/repo
 

@@ -1,6 +1,11 @@
 PROJECT_ROOT = File.expand_path("..", __dir__).freeze
 SPEC_ROOT = File.expand_path(__dir__).freeze
 
+if ENV.key?("ENABLE_COVERAGE")
+  require "simplecov"
+  SimpleCov.start
+end
+
 RSpec.configure do |config|
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
