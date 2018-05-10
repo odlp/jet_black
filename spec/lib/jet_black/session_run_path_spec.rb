@@ -26,4 +26,13 @@ RSpec.describe JetBlack::Session, "path prefix" do
 
     expect(ENV["PATH"]).to eq original_path
   end
+
+  it "ignores empty prefixes" do
+    original_path = ENV["PATH"].dup
+    JetBlack.configuration.path_prefix = ""
+
+    actual_path = subject.run("echo $PATH").stdout
+
+    expect(actual_path).to eq(original_path)
+  end
 end
