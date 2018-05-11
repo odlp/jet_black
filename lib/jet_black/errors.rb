@@ -33,4 +33,17 @@ module JetBlack
       MSG
     end
   end
+
+  class TerminalSessionTimeoutError < Error
+    attr_reader :terminal
+
+    def initialize(terminal, expected_value, timeout)
+      @terminal = terminal
+
+      super <<~MSG
+        Interactive terminal session timed out after #{timeout} second(s).
+        Waiting for: '#{expected_value}'
+      MSG
+    end
+  end
 end

@@ -9,6 +9,7 @@ require_relative "environment"
 require_relative "errors"
 require_relative "executed_command"
 require_relative "file_helper"
+require_relative "terminal_session"
 
 module JetBlack
   class Session
@@ -33,6 +34,16 @@ module JetBlack
       executed_command
     end
 
+    def run_interactive(command, options: {}, &block)
+      combined_options = session_options.merge(options)
+
+      executed_command =
+        exec_interactive_command(command, combined_options, block)
+
+      commands << executed_command
+      executed_command
+    end
+
     private
 
     attr_reader :session_options, :file_helper
@@ -50,6 +61,27 @@ module JetBlack
           stderr: stderr,
           exit_status: exit_status,
         )
+      end
+    end
+
+    def exec_interactive_command(raw_command, options, block)
+      Dir.chdir(directory) do
+        command_context(options) do
+          terminal = TerminalSession.new(raw_command)
+
+          unless block.nil?
+            block.call(terminal)
+          end
+
+          terminal.finalize
+
+          ExecutedCommand.new(
+            raw_command: raw_command,
+            stdout: terminal.captured_output,
+            stderr: nil,
+            exit_status: terminal.exit_status,
+          )
+        end
       end
     end
 
