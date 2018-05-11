@@ -3,6 +3,7 @@
 ## Pending release
 
 - Allows `stdin` data to be provided when running commands
+- Adds `create_executable` to which writes a file and adds execute permission
 
 ## v0.2.0
 

@@ -39,6 +39,13 @@ module JetBlack
       File.write(expanded_file_path, file_content)
     end
 
+    def create_executable(file_path, file_content)
+      expanded_file_path = File.expand_path(file_path, directory)
+
+      create_file(file_path, file_content)
+      FileUtils.chmod("+x", expanded_file_path)
+    end
+
     def append_to_file(file_path, append_content)
       expanded_file_path = File.expand_path(file_path, directory)
 
