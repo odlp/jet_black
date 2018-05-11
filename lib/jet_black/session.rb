@@ -16,9 +16,9 @@ module JetBlack
       @session_options = options
     end
 
-    def run(command, env: {}, options: {})
+    def run(command, stdin: nil, env: {}, options: {})
       combined_options = session_options.merge(options)
-      executed_command = exec_command(command, env, combined_options)
+      executed_command = exec_command(command, stdin, env, combined_options)
       commands << executed_command
       executed_command
     end
@@ -75,12 +75,12 @@ module JetBlack
 
     attr_reader :session_options
 
-    def exec_command(raw_command, raw_env, options)
+    def exec_command(raw_command, stdin, raw_env, options)
       env = Environment.new(raw_env).to_h
 
       command_context(options) do
         stdout, stderr, exit_status =
-          Open3.capture3(env, raw_command, chdir: directory)
+          Open3.capture3(env, raw_command, chdir: directory, stdin_data: stdin)
 
         ExecutedCommand.new(
           raw_command: raw_command,

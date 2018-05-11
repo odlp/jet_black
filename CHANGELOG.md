@@ -1,5 +1,9 @@
 # Changelog
 
+## Pending release
+
+- Allows `stdin` data to be provided when running commands
+
 ## v0.2.0
 
 - Adds RSpec matchers `have_stdout`, `have_stderr`, `have_no_stdout`, &
