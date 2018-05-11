@@ -1,43 +1,62 @@
+---
 version: 2
+
+#-------------------------------------------------------------------------------
+
+base_job: &base_job
+  working_directory: ~/repo
+  steps:
+    - checkout
+
+    - restore_cache:
+        keys:
+          - v1-dependencies-{{ checksum "Gemfile.lock" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+    - run:
+        name: install dependencies
+        command: bundle install --jobs=4 --retry=3 --path vendor/bundle
+
+    - save_cache:
+        paths:
+          - ./vendor/bundle
+        key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+
+    - run:
+        name: run tests
+        command: |
+          mkdir /tmp/test-results
+          bundle exec rspec --format progress \
+                            --format RspecJunitFormatter \
+                            --out /tmp/test-results/rspec.xml
+
+    # collect reports
+    - store_test_results:
+        path: /tmp/test-results
+    - store_artifacts:
+        path: /tmp/test-results
+        destination: test-results
+
+#-------------------------------------------------------------------------------
+
 jobs:
-  build:
+  ruby-2.4:
+    <<: *base_job
+    docker:
+      - image: circleci/ruby:2.4
+  ruby-2.5:
+    <<: *base_job
     docker:
       - image: circleci/ruby:2.5
     environment:
       ENABLE_COVERAGE: 1
 
-    working_directory: ~/repo
+#-------------------------------------------------------------------------------
 
-    steps:
-      - checkout
-
-      - restore_cache:
-          keys:
-          - v1-dependencies-{{ checksum "Gemfile.lock" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
-
-      - run:
-          name: install dependencies
-          command: |
-            bundle install --jobs=4 --retry=3 --path vendor/bundle
-
-      - save_cache:
-          paths:
-            - ./vendor/bundle
-          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
-
-      - run:
-          name: run tests
-          command: |
-            mkdir /tmp/test-results
-            bundle exec rspec --format progress \
-                            --format RspecJunitFormatter \
-                            --out /tmp/test-results/rspec.xml
-
-      # collect reports
-      - store_test_results:
-          path: /tmp/test-results
-      - store_artifacts:
-          path: /tmp/test-results
-          destination: test-results
+workflows:
+  version: 2
+  multiple-rubies:
+    jobs:
+      - ruby-2.5
+      - ruby-2.4
