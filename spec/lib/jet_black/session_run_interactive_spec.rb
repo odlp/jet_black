@@ -2,15 +2,13 @@ require "jet_black"
 
 RSpec.describe JetBlack::Session, "#run_interactive" do
   it "allows interactive commands to be run" do
-    subject.create_file "hello-world", <<~SH
+    subject.create_executable "hello-world", <<~SH
       #!/bin/sh
 
       echo "What's your name?"
       read name
       echo "Hello $name"
     SH
-
-    subject.run("chmod +x hello-world")
 
     result = subject.run_interactive("./hello-world") do |terminal|
       terminal.expect("What's your name?", reply: "Alice")
@@ -27,15 +25,13 @@ RSpec.describe JetBlack::Session, "#run_interactive" do
   end
 
   it "raises an error if the expected value isn't found" do
-    subject.create_file "hello-world", <<~SH
+    subject.create_executable "hello-world", <<~SH
       #!/bin/sh
 
       echo "What's your name?"
       read name
       echo "Hello $name"
     SH
-
-    subject.run("chmod +x hello-world")
 
     run_session_with_error = Proc.new do
       subject.run_interactive("./hello-world") do |terminal|
