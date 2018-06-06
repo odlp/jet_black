@@ -1,6 +1,6 @@
 # Changelog
 
-## Pending release
+## v0.3.0
 
 - Allows `stdin` data to be provided when running commands
 - Adds `create_executable` to which writes a file and adds execute permission

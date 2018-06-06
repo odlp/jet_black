@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    jet_black (0.2.0)
+    jet_black (0.3.0)
 
 GEM
   remote: https://rubygems.org/
