@@ -13,6 +13,7 @@ with [RSpec] in mind. Features:
   - exit status of the process
 - Conveniently manipulate files in the temporary directory:
   - [Create files](#file-manipulation)
+  - [Create executable files](#file-manipulation)
   - [Append content to files](#file-manipulation)
   - [Copy fixture files](#copying-fixture-files) from your project
 - Modify the environment without modifying the parent test process:
@@ -75,17 +76,27 @@ result.stderr # => ""
 result.exit_status # => 0
 ```
 
+Providing `stdin` data:
+
+```ruby
+session = JetBlack::Session.new
+session.run("./hello-world", stdin: "Alice")
+```
+
 ### File manipulation
 
 ```ruby
-require "jet_black"
-
 session = JetBlack::Session.new
 
 session.create_file "file.txt", <<~TXT
   The quick brown fox
   jumps over the lazy dog
 TXT
+
+session.create_executable "hello-world.sh", <<~SH
+  #!/bin/sh
+  echo "Hello world"
+SH
 
 session.append_to_file "file.txt", <<~TXT
   shiny
@@ -121,8 +132,6 @@ end
 Now you can copy fixtures across into a session's temporary directory:
 
 ```ruby
-require "jet_black"
-
 session = JetBlack::Session.new
 session.copy_fixture("src-config.json", "config.json")
 
@@ -133,8 +142,6 @@ session.copy_fixture("src-config.json", "config/config.json")
 ### Environment variable overrides
 
 ```ruby
-require "jet_black"
-
 session = JetBlack::Session.new
 result = subject.run("echo $FOO", env: { FOO: "bar" })
 
@@ -149,8 +156,6 @@ different Gemfile in a given spec, you can configure the session or individual
 commands to run with a clean Bundler environment.
 
 ```ruby
-require "jet_black"
-
 # Per command
 session = JetBlack::Session.new
 subject.run("bundle install", options: { clean_bundler_env: true })
@@ -205,8 +210,6 @@ And the following predicate matchers:
 ```ruby
 # spec/black_box/cli_spec.rb
 
-require "jet_black"
-
 RSpec.describe "my command line tool" do
   let(:session) { JetBlack::Session.new }
 
@@ -225,8 +228,6 @@ end
 However these assertions can be made with built-in matchers too:
 
 ```ruby
-require "jet_black"
-
 RSpec.describe "my command line tool" do
   let(:session) { JetBlack::Session.new }
 
