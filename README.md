@@ -8,22 +8,22 @@ with [RSpec] in mind. Features:
 [RSpec]: http://rspec.info/
 
 - Each session takes place within a unique temporary directory, outside the project
-- Synchronously [run commands](#running-commands) then write assertions on the:
-  - `stdout` / `stderr` content
-  - exit status of the process
-- Conveniently manipulate files in the temporary directory:
+- Synchronously [run commands](#running-commands) then write assertions on:
+  - The `stdout` / `stderr` content
+  - The exit status of the process
+- Manipulate files in the temporary directory:
   - [Create files](#file-manipulation)
   - [Create executable files](#file-manipulation)
   - [Append content to files](#file-manipulation)
   - [Copy fixture files](#copying-fixture-files) from your project
-- Modify the environment without modifying the parent test process:
+- Modify the environment without changing the parent test process:
   - [Override environment variables](#environment-variable-overrides)
   - [Escape the current Bundler context](#clean-bundler-environment)
   - [Adjust `$PATH`](#path-prefix) to include your executable / Subject Under Test
 - [RSpec matchers](#rspec-matchers) (optional)
 
-The temporary directory is discarded after each spec. This means you can write
-& modify files and run commands (like `git init`) without worrying about tidying
+The temporary directory is discarded after each spec. This means you can write &
+modify files and run commands (like `git init`) without worrying about tidying
 up after or impacting your actual project.
 
 ## Setup
@@ -47,6 +47,8 @@ require "jet_black/rspec"
 
 Any specs you write in the `spec/black_box` folder will then have an inferred
 `:black_box` meta type, and the matchers will be available in those examples.
+
+#### Manual RSpec setup
 
 Alternatively you can manually include the matchers:
 
@@ -114,30 +116,30 @@ TXT
 ### Copying fixture files
 
 It's ideal to create pertinent files inline within a spec, to provide context
-for the reader, but sometimes a large or non-readable file is best copied
-across.
+for the reader, but sometimes it's better to copy across a large or
+non-human-readable file.
 
-First create a fixture directory in your project, such as
-`spec/fixtures/black_box`. Then configure the fixture path in
-`spec/support/jet_black.rb`:
+1.    Create a fixture directory in your project, such as `spec/fixtures/black_box`.
 
-```ruby
-require "jet_black"
+2.    Configure the fixture path in `spec/support/jet_black.rb`:
 
-JetBlack.configure do |config|
-  config.fixture_directory = File.expand_path("../fixtures/black_box", __dir__)
-end
-```
+      ```ruby
+      require "jet_black"
 
-Now you can copy fixtures across into a session's temporary directory:
+      JetBlack.configure do |config|
+        config.fixture_directory = File.expand_path("../fixtures/black_box", __dir__)
+      end
+      ```
 
-```ruby
-session = JetBlack::Session.new
-session.copy_fixture("src-config.json", "config.json")
+3.    Copy fixtures across into a session's temporary directory:
 
-# Destination subdirectories are created for you:
-session.copy_fixture("src-config.json", "config/config.json")
-```
+      ```ruby
+      session = JetBlack::Session.new
+      session.copy_fixture("src-config.json", "config.json")
+
+      # Destination subdirectories are created for you:
+      session.copy_fixture("src-config.json", "config/config.json")
+      ```
 
 ### Environment variable overrides
 
