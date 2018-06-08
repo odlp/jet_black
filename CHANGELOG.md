@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Allow environment variables to be unset
+
 ## v0.3.0
 
 - Allows `stdin` data to be provided when running commands

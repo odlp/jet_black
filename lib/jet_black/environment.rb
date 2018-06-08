@@ -14,7 +14,7 @@ module JetBlack
 
     def stringify_env(env)
       env.map do |key, value|
-        [key.to_s, value.to_s]
+        [key.to_s, value&.to_s]
       end.to_h
     end
 

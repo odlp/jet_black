@@ -34,6 +34,15 @@ RSpec.describe JetBlack::Session, "environment" do
     expect(command_2.stdout).to eq "bar"
   end
 
+  it "allows environment variables to be unset" do
+    with_environment("FOO" => "bar") do
+      result =
+        subject.run(%q(ruby -e 'puts ENV.key?("FOO")'), env: { "FOO" => nil })
+
+      expect(result.stdout).to(include("false"), "$FOO should be unset")
+    end
+  end
+
   describe "clean_bundler_env option" do
     it "allows a clean environment without Bundler variables" do
       expect(ENV["BUNDLE_GEMFILE"]).to_not be_empty
