@@ -181,7 +181,7 @@ Configure the `path_prefix` to the directory containing with your executable(s):
 require "jet_black"
 
 JetBlack.configure do |config|
-  config.path_prefix = File.expand("../../bin", __dir__)
+  config.path_prefix = File.expand_path("../../bin", __dir__)
 end
 ```
 
