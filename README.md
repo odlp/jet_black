@@ -150,6 +150,8 @@ result = subject.run("echo $FOO", env: { FOO: "bar" })
 result.stdout # => "bar"
 ```
 
+Provide a `nil` value to unset an environment variable.
+
 ### Clean Bundler environment
 
 If your project's test suite is invoked with Bundler (e.g. `bundle exec rspec`)

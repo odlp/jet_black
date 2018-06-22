@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.4.0
 
 - Scrub ANSI escape sequences in stdout and stderr
 - Allow environment variables to be unset
