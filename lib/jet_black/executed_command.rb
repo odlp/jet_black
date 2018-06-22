@@ -9,8 +9,8 @@ module JetBlack
       @raw_command = raw_command
       @raw_stdout = stdout
       @raw_stderr = stderr
-      @stdout = AnsiScrubber.call(stdout.chomp)
-      @stderr = AnsiScrubber.call(stderr.chomp)
+      @stdout = scrub(stdout)
+      @stderr = scrub(stderr)
       @exit_status = exit_status.to_i
     end
 
@@ -20,6 +20,12 @@ module JetBlack
 
     def failure?
       !success?
+    end
+
+    private
+
+    def scrub(output_string)
+      AnsiScrubber.call(output_string.to_s.chomp)
     end
   end
 end

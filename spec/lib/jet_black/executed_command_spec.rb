@@ -26,6 +26,18 @@ RSpec.describe JetBlack::ExecutedCommand do
     end
   end
 
+  describe "#stdout" do
+    it "tolerates nil stdout" do
+      expect(executed_command(stdout: nil).stdout).to eq ""
+    end
+  end
+
+  describe "#stderr" do
+    it "tolerates nil stderr" do
+      expect(executed_command(stderr: nil).stderr).to eq ""
+    end
+  end
+
   private
 
   def zero_exit
@@ -36,11 +48,11 @@ RSpec.describe JetBlack::ExecutedCommand do
     executed_command(exit_status: 1)
   end
 
-  def executed_command(exit_status:)
+  def executed_command(exit_status: 0, stdout: "", stderr: "")
     described_class.new(
       raw_command: "",
-      stdout: "",
-      stderr: "",
+      stdout: stdout,
+      stderr: stderr,
       exit_status: exit_status,
     )
   end
