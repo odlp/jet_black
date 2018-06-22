@@ -4,14 +4,14 @@ RSpec.describe JetBlack::Session, "#run" do
   it "captures the stdout" do
     result = subject.run("echo foo")
 
-    expect(result.stdout).to eq "foo"
+    expect(result.stdout).to eq "foo\n"
     expect(result.stderr).to be_empty
   end
 
   it "captures the stderr" do
     result = subject.run("echo foo 1>&2")
 
-    expect(result.stderr).to eq "foo"
+    expect(result.stderr).to eq "foo\n"
     expect(result.stdout).to be_empty
   end
 
@@ -21,7 +21,7 @@ RSpec.describe JetBlack::Session, "#run" do
   end
 
   it "switches to the working directory" do
-    pwd = subject.run("pwd").stdout
+    pwd = subject.run("pwd").stdout.chomp
 
     expect(pwd).to eq subject.directory
   end

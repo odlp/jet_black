@@ -30,11 +30,19 @@ RSpec.describe JetBlack::ExecutedCommand do
     it "tolerates nil stdout" do
       expect(executed_command(stdout: nil).stdout).to eq ""
     end
+
+    it "preserves trailing newlines" do
+      expect(executed_command(stdout: "foo\n").stdout).to eq "foo\n"
+    end
   end
 
   describe "#stderr" do
     it "tolerates nil stderr" do
       expect(executed_command(stderr: nil).stderr).to eq ""
+    end
+
+    it "preserves trailing newlines" do
+      expect(executed_command(stderr: "foo\n").stderr).to eq "foo\n"
     end
   end
 

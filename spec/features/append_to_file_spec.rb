@@ -10,15 +10,14 @@ RSpec.describe JetBlack::Session, "#append_to_file" do
       lines
     TXT
 
-    result = subject.run("cat file.txt")
-    expected_content = <<~TXT
+    stdout = subject.run("cat file.txt").stdout
+
+    expect(stdout).to eq <<~TXT
       original
       ooh
       new
       lines
     TXT
-
-    expect(result.stdout).to eq expected_content.chomp
   end
 
   it "raises an error if the target file doesn't exist" do

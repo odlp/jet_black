@@ -73,7 +73,7 @@ require "jet_black"
 session = JetBlack::Session.new
 result = session.run("echo foo")
 
-result.stdout # => "foo"
+result.stdout # => "foo\n"
 result.stderr # => ""
 result.exit_status # => 0
 ```
@@ -145,7 +145,7 @@ non-human-readable file.
 
 ```ruby
 session = JetBlack::Session.new
-result = subject.run("echo $FOO", env: { FOO: "bar" })
+result = session.run("printf $FOO", env: { FOO: "bar" })
 
 result.stdout # => "bar"
 ```
@@ -159,15 +159,19 @@ but you want to run commands like `bundle install` and `bundle exec` with a
 different Gemfile in a given spec, you can configure the session or individual
 commands to run with a clean Bundler environment.
 
-```ruby
-# Per command
-session = JetBlack::Session.new
-subject.run("bundle install", options: { clean_bundler_env: true })
+Per command:
 
-# Per session
+```ruby
+session = JetBlack::Session.new
+session.run("bundle install", options: { clean_bundler_env: true })
+```
+
+Per session:
+
+```ruby
 session = JetBlack::Session.new(options: { clean_bundler_env: true })
-subject.run("bundle install")
-subject.run("bundle exec rake")
+session.run("bundle install")
+session.run("bundle exec rake")
 ```
 
 ### `$PATH` prefix

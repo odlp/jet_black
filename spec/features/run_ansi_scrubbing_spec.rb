@@ -7,7 +7,7 @@ RSpec.describe JetBlack::Session, "ANSI scrubbing" do
 
       result = subject.run("./print-green")
 
-      expect(result.stdout).to eq "This is green text"
+      expect(result.stdout).to include "This is green text"
     end
 
     it "preserves the original output in #raw_stdout" do
@@ -25,7 +25,7 @@ RSpec.describe JetBlack::Session, "ANSI scrubbing" do
 
       result = subject.run("./print-red 1>&2")
 
-      expect(result.stderr).to eq "This is red text"
+      expect(result.stderr).to include "This is red text"
     end
 
     it "preserves the original output in #raw_stderr" do
