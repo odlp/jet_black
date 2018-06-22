@@ -1,0 +1,6 @@
+#!/bin/sh
+
+set -euo pipefail
+
+docker build -t odlp/jet_black .
+docker run odlp/jet_black bundle exec rspec --tty
