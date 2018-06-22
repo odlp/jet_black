@@ -1,9 +1,8 @@
 # Changelog
 
-## Unreleased
+## v0.5.0
 
-- `stdout` and `stderr` now keep any trailing newlines at the end of the
-  string.
+- `stdout` and `stderr` now keep any trailing newlines at the end of the string.
 
 ## v0.4.0
 
