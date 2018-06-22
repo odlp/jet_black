@@ -25,7 +25,7 @@ module JetBlack
     private
 
     def scrub(output_string)
-      AnsiScrubber.call(output_string.to_s.chomp)
+      AnsiScrubber.call(output_string.to_s)
     end
   end
 end

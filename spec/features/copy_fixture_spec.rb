@@ -13,7 +13,7 @@ RSpec.describe JetBlack::Session, "#copy_fixture" do
     subject.copy_fixture("a-original.txt", "a-copied.txt")
     fixture_content = subject.run("cat a-copied.txt").stdout
 
-    expect(fixture_content).to eq "I'm a fixture"
+    expect(fixture_content).to include "I'm a fixture"
   end
 
   it "creates sub-directories if required" do
@@ -22,7 +22,7 @@ RSpec.describe JetBlack::Session, "#copy_fixture" do
     subject.copy_fixture("a-original.txt", "nested/deep/a-copied.txt")
     fixture_content = subject.run("cat nested/deep/a-copied.txt").stdout
 
-    expect(fixture_content).to eq "I'm a fixture"
+    expect(fixture_content).to include "I'm a fixture"
   end
 
   it "raises an error trying to write a file outside the working directory" do

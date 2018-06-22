@@ -13,12 +13,10 @@ RSpec.describe JetBlack::Session, "#run with stdin" do
     subject.run("chmod +x hello-world")
     result = subject.run("./hello-world", stdin: "Alice")
 
-    expected_output = <<~TXT
+    expect(result).to be_a_success
+    expect(result.stdout).to eq <<~TXT
       What's your name?
       Hello Alice
     TXT
-
-    expect(result.stdout).to eq expected_output.chomp
-    expect(result).to be_a_success
   end
 end

@@ -1,8 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- `stdout` and `stderr` now keep any trailing newlines at the end of the
+  string.
+
 ## v0.4.0
 
-- Scrub ANSI escape sequences in stdout and stderr
+- Scrub ANSI escape sequences in `stdout` and `stderr`
 - Allow environment variables to be unset
 
 ## v0.3.0

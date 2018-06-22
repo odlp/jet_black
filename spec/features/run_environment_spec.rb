@@ -8,12 +8,12 @@ RSpec.describe JetBlack::Session, "environment" do
     with_environment("FOO" => "bar") do
       expect(ENV["FOO"]).to eq "bar"
 
-      plain_result = subject.run("echo $FOO")
+      plain_result = subject.run("printf $FOO")
       expect(plain_result.stdout).to eq "bar"
 
       expect(ENV["FOO"]).to eq "bar"
 
-      modified_env_result = subject.run("echo $FOO", env: { "FOO" => "123" })
+      modified_env_result = subject.run("printf $FOO", env: { "FOO" => "123" })
       expect(modified_env_result.stdout).to eq "123"
 
       expect(ENV["FOO"]).to eq "bar"
@@ -21,16 +21,16 @@ RSpec.describe JetBlack::Session, "environment" do
   end
 
   it "allows overrides with symbol keys" do
-    result = subject.run("echo $FOO", env: { FOO: "bar" })
+    result = subject.run("printf $FOO", env: { FOO: "bar" })
 
     expect(result.stdout).to eq "bar"
   end
 
   it "allows overrides with non-string values" do
-    result1 = subject.run("echo $FOO", env: { "FOO" => 123 })
+    result1 = subject.run("printf $FOO", env: { "FOO" => 123 })
     expect(result1.stdout).to eq "123"
 
-    result2 = subject.run("echo $FOO", env: { "FOO" => :bar })
+    result2 = subject.run("printf $FOO", env: { "FOO" => :bar })
     expect(result2.stdout).to eq "bar"
   end
 
@@ -47,17 +47,17 @@ RSpec.describe JetBlack::Session, "environment" do
     it "allows a clean environment without Bundler variables" do
       expect(ENV["BUNDLE_GEMFILE"]).to_not be_empty
 
-      default_result = subject.run("echo $BUNDLE_GEMFILE")
+      default_result = subject.run("printf $BUNDLE_GEMFILE")
       expect(default_result.stdout).to eq ENV["BUNDLE_GEMFILE"]
 
       options = { clean_bundler_env: true }
-      clean_result = subject.run("echo $BUNDLE_GEMFILE", options: options)
+      clean_result = subject.run("printf $BUNDLE_GEMFILE", options: options)
       expect(clean_result.stdout).to be_empty
     end
 
     it "allows the option to specified for the whole session" do
       session = described_class.new(options: { clean_bundler_env: true })
-      clean_result = session.run("echo $BUNDLE_GEMFILE")
+      clean_result = session.run("printf $BUNDLE_GEMFILE")
 
       expect(clean_result.stdout).to be_empty
     end
@@ -66,7 +66,7 @@ RSpec.describe JetBlack::Session, "environment" do
       session = described_class.new(options: { clean_bundler_env: true })
 
       result = session.run(
-        "echo $BUNDLE_GEMFILE", options: { clean_bundler_env: false }
+        "printf $BUNDLE_GEMFILE", options: { clean_bundler_env: false }
       )
 
       expect(result.stdout).to eq ENV["BUNDLE_GEMFILE"]
