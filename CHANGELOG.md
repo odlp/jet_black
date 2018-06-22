@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Scrub ANSI escape sequences in stdout and stderr
 - Allow environment variables to be unset
 
 ## v0.3.0
