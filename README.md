@@ -254,3 +254,10 @@ RSpec.describe "my command line tool" do
   end
 end
 ```
+
+## More examples
+
+- JetBlack's own [higher-level tests](https://github.com/odlp/jet_black/tree/master/spec/features)
+- A more complex scenario testing a [gem in a fresh Rails app](https://github.com/thoughtbot/capybara_discoball/blob/master/spec/black_box/rails_app_spec.rb#L8-L39). Shows how to:
+  - Include the [gem-under-test via the Rails app's Gemfile](https://github.com/thoughtbot/capybara_discoball/blob/4e89bfe5531eea1bf6dac42c46c26d0c687d6ddf/spec/black_box/rails_app_spec.rb#L99-L104)
+  - Use a [clean Bundler environment](https://github.com/thoughtbot/capybara_discoball/blob/4e89bfe5531eea1bf6dac42c46c26d0c687d6ddf/spec/black_box/rails_app_spec.rb#L5) to use the Gemfile of the new Rails app (instead of the Bundler context of the gem's test suite)
