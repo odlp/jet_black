@@ -2,7 +2,7 @@ PROJECT_ROOT = File.expand_path("..", __dir__).freeze
 SPEC_ROOT = File.expand_path(__dir__).freeze
 
 enable_coverage = ENV.key?("ENABLE_COVERAGE")
-enable_coveralls = enable_coverage&& ENV.key?("COVERALLS_REPO_TOKEN")
+enable_coveralls = enable_coverage && ENV.key?("COVERALLS_REPO_TOKEN")
 
 if enable_coverage
   require "simplecov"
