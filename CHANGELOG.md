@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.5.1
+
+- Fix missing `bundler` require - thanks @lpender via [#6][pr-6]
+
+[pr-6]: https://github.com/odlp/jet_black/pull/6
+
 ## v0.5.0
 
 - `stdout` and `stderr` now keep any trailing newlines at the end of the string.
