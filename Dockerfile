@@ -1,8 +1,4 @@
-FROM ruby:2.5-alpine
-
-RUN apk update && \
-    apk add git && \
-    mkdir -p /app/lib/jet_black
+FROM ruby:2.7
 
 WORKDIR /app
 
