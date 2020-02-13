@@ -55,9 +55,18 @@ module JetBlack
 
     def command_context(options)
       if options[:clean_bundler_env]
-        Bundler.with_clean_env { yield }
+        Bundler.public_send(bundler_clean_environment_method) { yield }
       else
         yield
+      end
+    end
+
+    def bundler_clean_environment_method
+      # Bundler 2.x
+      if Bundler.respond_to?(:with_unbundled_env)
+        :with_unbundled_env
+      else
+        :with_clean_env
       end
     end
   end

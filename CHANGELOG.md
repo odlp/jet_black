@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Fix deprecation warning: `Bundler.with_clean_env` has been deprecated in
+  favor of `Bundler.with_unbundled_env`
+
 ## v0.5.1
 
 - Fix missing `bundler` require - thanks @lpender via [#6][pr-6]
