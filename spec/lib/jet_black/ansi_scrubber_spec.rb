@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "jet_black/ansi_scrubber"
 
 RSpec.describe JetBlack::AnsiScrubber do

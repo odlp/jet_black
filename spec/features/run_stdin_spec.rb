@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "jet_black"
 
 RSpec.describe JetBlack::Session, "#run with stdin" do

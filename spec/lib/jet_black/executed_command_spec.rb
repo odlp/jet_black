@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "jet_black/executed_command"
 
 RSpec.describe JetBlack::ExecutedCommand do

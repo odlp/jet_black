@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "jet_black/configuration"
 require "jet_black/session"
 require "jet_black/version"

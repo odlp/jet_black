@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "jet_black/session"
 
 RSpec.describe JetBlack::Session, "#create_file" do

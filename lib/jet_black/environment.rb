@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module JetBlack
   class Environment
     def initialize(raw_env)

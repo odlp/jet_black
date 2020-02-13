@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "jet_black"
 require "support/environment_support"
 

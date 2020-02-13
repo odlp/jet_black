@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 PROJECT_ROOT = File.expand_path("..", __dir__).freeze
 SPEC_ROOT = File.expand_path(__dir__).freeze
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module EnvironmentSupport
   def with_environment(replacement_env)
     original_env = ENV.to_hash

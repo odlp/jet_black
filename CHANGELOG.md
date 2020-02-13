@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Freeze string literals
 - Fix deprecation warning: `Bundler.with_clean_env` has been deprecated in
   favor of `Bundler.with_unbundled_env`
 

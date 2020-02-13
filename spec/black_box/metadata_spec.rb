@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "jet_black/rspec"
 
 RSpec.describe "black_box directory" do
