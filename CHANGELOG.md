@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.6.0
 
 - Freeze string literals
 - Fix deprecation warning: `Bundler.with_clean_env` has been deprecated in
