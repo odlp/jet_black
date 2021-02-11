@@ -32,23 +32,16 @@ module JetBlack
     def wait_for_finish
       return if finished?
 
-      drain_output
-      input.close
-      output.close
+      finalize_io
 
-      _, pty_status = Process.waitpid2(pid)
-      self.exit_status = pty_status.exitstatus
+      self.exit_status = wait_for_exit_status
     end
 
     def end_session(signal: "INT")
       Process.kill(signal, pid)
+      finalize_io
 
-      drain_output
-      input.close
-      output.close
-
-      _, pty_status = Process.waitpid2(pid)
-      self.exit_status = pty_status.exitstatus || pty_status.termsig
+      self.exit_status = wait_for_exit_status
     end
 
     def finished?
@@ -61,11 +54,22 @@ module JetBlack
     attr_reader :input, :output, :pid
     attr_writer :exit_status
 
+    def finalize_io
+      drain_output
+      input.close
+      output.close
+    end
+
+    def wait_for_exit_status
+      _, pty_status = Process.waitpid2(pid)
+      pty_status.exitstatus || pty_status.termsig
+    end
+
     def drain_output
       until output.eof? do
         raw_captured_output << output.readline
       end
-    rescue Errno::EIO => e
+    rescue Errno::EIO => e # https://github.com/ruby/ruby/blob/57fb2199059cb55b632d093c2e64c8a3c60acfbb/ext/pty/pty.c#L521
       warn("Rescued #{e.message}") if ENV.key?("DEBUG")
     end
   end
