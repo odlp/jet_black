@@ -73,7 +73,7 @@ module JetBlack
             block.call(terminal)
           end
 
-          terminal.finalize
+          terminal.wait_for_finish
 
           ExecutedCommand.new(
             raw_command: raw_command,

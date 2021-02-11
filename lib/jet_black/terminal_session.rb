@@ -11,14 +11,13 @@ module JetBlack
     def initialize(raw_command)
       @output, @input, @pid = PTY.spawn(raw_command)
       self.raw_captured_output = []
-      self.killed = false
     end
 
     def expect(expected_value, reply:, timeout: DEFAULT_TIMEOUT)
       output_matches = output.expect(expected_value, timeout)
 
       if output_matches.nil?
-        kill_session!
+        end_session(signal: "KILL")
         raise TerminalSessionTimeoutError.new(self, expected_value, timeout)
       end
 
@@ -30,28 +29,35 @@ module JetBlack
       raw_captured_output.join.gsub("\r", "")
     end
 
-    def finalize
+    def wait_for_finish
+      return if finished?
+
       drain_output
       input.close
       output.close
-      Process.waitpid(pid)
-      self.exit_status = $?.exitstatus
+
+      _, pty_status = Process.waitpid2(pid)
+      self.exit_status = pty_status.exitstatus
     end
 
-    def kill_session!
+    def end_session(signal: "INT")
+      Process.kill(signal, pid)
+
+      drain_output
       input.close
       output.close
-      self.exit_status = Process.kill(9, pid)
-      self.killed = true
+
+      _, pty_status = Process.waitpid2(pid)
+      self.exit_status = pty_status.exitstatus || pty_status.termsig
     end
 
-    def killed?
-      killed
+    def finished?
+      !exit_status.nil?
     end
 
     private
 
-    attr_accessor :killed, :raw_captured_output
+    attr_accessor :raw_captured_output
     attr_reader :input, :output, :pid
     attr_writer :exit_status
 

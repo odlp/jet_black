@@ -17,16 +17,14 @@ RSpec.describe JetBlack::Session, "#run_interactive" do
       terminal.expect("What's your location?", reply: "Wonderland")
     end
 
-    expected_output = <<~TXT
+    expect(result.exit_status).to eq 0
+    expect(result.stdout).to eq <<~TXT
       What's your name?
       Alice
       What's your location?
       Wonderland
       Hello Alice in Wonderland
     TXT
-
-    expect(result.stdout).to eq expected_output
-    expect(result.exit_status).to eq 0
   end
 
   it "raises an error if the expected value isn't found" do
@@ -47,7 +45,7 @@ RSpec.describe JetBlack::Session, "#run_interactive" do
     expected_error = JetBlack::TerminalSessionTimeoutError
 
     expect(run_session_with_error).to raise_error(expected_error) do |e|
-      expect(e.terminal).to be_killed
+      expect(e.terminal).to be_finished
       expect(e.terminal.exit_status).to be > 0
 
       expect(e.message).to eq <<~MSG
@@ -70,6 +68,29 @@ RSpec.describe JetBlack::Session, "#run_interactive" do
       )
 
       expect(clean_command.stdout.chomp).to be_empty
+    end
+  end
+
+  describe "ending a session early" do
+    it "doesn't hang" do
+      subject.create_executable "nosy", <<~SH
+        #!/bin/sh
+
+        trap "echo 'Bye bye'; exit 127;" INT
+
+        echo "Question 1"
+        read answer1
+        echo "Question 2"
+        read answer 2
+      SH
+
+      result = subject.run_interactive("./nosy") do |terminal|
+        terminal.expect("Question 1", reply: "42")
+        terminal.end_session(signal: "INT")
+      end
+
+      expect(result.exit_status).to eq(127)
+      expect(result.stdout).to include("Bye bye")
     end
   end
 end
