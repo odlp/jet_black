@@ -7,17 +7,22 @@ RSpec.describe JetBlack::Session, "#run_interactive" do
 
       echo "What's your name?"
       read name
-      echo "Hello $name"
+      echo "What's your location?"
+      read location
+      echo "Hello ${name} in ${location}"
     SH
 
     result = subject.run_interactive("./hello-world") do |terminal|
       terminal.expect("What's your name?", reply: "Alice")
+      terminal.expect("What's your location?", reply: "Wonderland")
     end
 
     expected_output = <<~TXT
       What's your name?
       Alice
-      Hello Alice
+      What's your location?
+      Wonderland
+      Hello Alice in Wonderland
     TXT
 
     expect(result.stdout).to eq expected_output
