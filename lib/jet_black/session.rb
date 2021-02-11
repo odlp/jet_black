@@ -65,23 +65,21 @@ module JetBlack
     end
 
     def exec_interactive_command(raw_command, options, block)
-      Dir.chdir(directory) do
-        command_context(options) do
-          terminal = TerminalSession.new(raw_command)
+      command_context(options) do
+        terminal = TerminalSession.new(raw_command, directory: directory)
 
-          unless block.nil?
-            block.call(terminal)
-          end
-
-          terminal.wait_for_finish
-
-          ExecutedCommand.new(
-            raw_command: raw_command,
-            stdout: terminal.captured_output,
-            stderr: nil,
-            exit_status: terminal.exit_status,
-          )
+        unless block.nil?
+          block.call(terminal)
         end
+
+        terminal.wait_for_finish
+
+        ExecutedCommand.new(
+          raw_command: raw_command,
+          stdout: terminal.captured_output,
+          stderr: nil,
+          exit_status: terminal.exit_status,
+        )
       end
     end
 

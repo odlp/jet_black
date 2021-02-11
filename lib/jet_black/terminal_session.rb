@@ -8,8 +8,8 @@ module JetBlack
 
     attr_reader :exit_status
 
-    def initialize(raw_command)
-      @output, @input, @pid = PTY.spawn(raw_command)
+    def initialize(raw_command, directory:)
+      @output, @input, @pid = PTY.spawn(raw_command, chdir: directory)
       self.raw_captured_output = []
     end
 
