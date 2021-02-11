@@ -20,7 +20,7 @@ RSpec.describe JetBlack::Session, "#run_interactive" do
       Hello Alice
     TXT
 
-    expect(result.stdout).to eq expected_output.chomp
+    expect(result.stdout).to eq expected_output
     expect(result.exit_status).to eq 0
   end
 
@@ -35,7 +35,7 @@ RSpec.describe JetBlack::Session, "#run_interactive" do
 
     run_session_with_error = Proc.new do
       subject.run_interactive("./hello-world") do |terminal|
-        terminal.expect("Foo bar", reply: "baz", timeout: 1)
+        terminal.expect("Foo bar", reply: "baz", timeout: 0.1)
       end
     end
 
@@ -46,7 +46,7 @@ RSpec.describe JetBlack::Session, "#run_interactive" do
       expect(e.terminal.exit_status).to be > 0
 
       expect(e.message).to eq <<~MSG
-        Interactive terminal session timed out after 1 second(s).
+        Interactive terminal session timed out after 0.1 second(s).
         Waiting for: 'Foo bar'
       MSG
     end
@@ -57,14 +57,14 @@ RSpec.describe JetBlack::Session, "#run_interactive" do
       expect(ENV["BUNDLE_GEMFILE"]).to_not be_empty
 
       default_command = subject.run_interactive("echo $BUNDLE_GEMFILE")
-      expect(default_command.stdout).to eq ENV["BUNDLE_GEMFILE"]
+      expect(default_command.stdout.chomp).to eq ENV["BUNDLE_GEMFILE"]
 
       clean_command = subject.run_interactive(
         "echo $BUNDLE_GEMFILE",
         options: { clean_bundler_env: true },
       )
 
-      expect(clean_command.stdout).to be_empty
+      expect(clean_command.stdout.chomp).to be_empty
     end
   end
 end
