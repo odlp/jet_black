@@ -61,8 +61,14 @@ jobs:
       - image: circleci/ruby:2.7
     environment:
       ENABLE_COVERAGE: 1
+  ruby-3.0:
+    <<: *base_job
+    docker:
+      - image: circleci/ruby:3.0
 
 #-------------------------------------------------------------------------------
+
+# TODO: Migrate to CircleCI matrix
 
 workflows:
   version: 2
@@ -72,3 +78,4 @@ workflows:
       - ruby-2.5
       - ruby-2.6
       - ruby-2.7
+      - ruby-3.0
