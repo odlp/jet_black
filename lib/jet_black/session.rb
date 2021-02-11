@@ -76,8 +76,8 @@ module JetBlack
 
         ExecutedCommand.new(
           raw_command: raw_command,
-          stdout: terminal.captured_output,
-          stderr: nil,
+          stdout: terminal.stdout,
+          stderr: terminal.stderr,
           exit_status: terminal.exit_status,
         )
       end

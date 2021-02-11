@@ -9,8 +9,9 @@ module JetBlack
     attr_reader :exit_status
 
     def initialize(raw_command, directory:)
-      @output, @input, @pid = PTY.spawn(raw_command, chdir: directory)
-      self.raw_captured_output = []
+      @stderr_reader, @stderr_writer = IO.pipe
+      @output, @input, @pid = PTY.spawn(raw_command, chdir: directory, err: stderr_writer.fileno)
+      self.raw_stdout = []
     end
 
     def expect(expected_value, reply:, timeout: DEFAULT_TIMEOUT)
@@ -21,12 +22,16 @@ module JetBlack
         raise TerminalSessionTimeoutError.new(self, expected_value, timeout)
       end
 
-      raw_captured_output.concat(output_matches)
+      raw_stdout.concat(output_matches)
       input.puts(reply)
     end
 
-    def captured_output
-      raw_captured_output.join.gsub("\r", "")
+    def stdout
+      raw_stdout.join.gsub("\r", "")
+    end
+
+    def stderr
+      raw_std_err
     end
 
     def wait_for_finish
@@ -50,14 +55,13 @@ module JetBlack
 
     private
 
-    attr_accessor :raw_captured_output
-    attr_reader :input, :output, :pid
+    attr_accessor :raw_stdout, :raw_std_err
+    attr_reader :input, :output, :pid, :stderr_reader, :stderr_writer
     attr_writer :exit_status
 
     def finalize_io
-      drain_output
-      input.close
-      output.close
+      drain_stdout
+      drain_stderr
     end
 
     def wait_for_exit_status
@@ -65,12 +69,20 @@ module JetBlack
       pty_status.exitstatus || pty_status.termsig
     end
 
-    def drain_output
+    def drain_stdout
       until output.eof? do
-        raw_captured_output << output.readline
+        raw_stdout << output.readline
       end
+
+      input.close
+      output.close
     rescue Errno::EIO => e # https://github.com/ruby/ruby/blob/57fb2199059cb55b632d093c2e64c8a3c60acfbb/ext/pty/pty.c#L521
       warn("Rescued #{e.message}") if ENV.key?("DEBUG")
+    end
+
+    def drain_stderr
+      stderr_writer.close
+      self.raw_std_err = stderr_reader.read
     end
   end
 end

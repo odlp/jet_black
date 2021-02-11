@@ -55,6 +55,29 @@ RSpec.describe JetBlack::Session, "#run_interactive" do
     end
   end
 
+  describe "STDERR" do
+    it "captures STDERR separately" do
+      subject.create_executable "warning", <<~SH
+        #!/bin/sh
+
+        echo "error 1" >&2
+        echo "normal message"
+        echo "error 2" >&2
+      SH
+
+      result = subject.run_interactive("./warning")
+
+      expect(result.exit_status).to eq 0
+      expect(result.stdout).to eq <<~TXT
+        normal message
+      TXT
+      expect(result.stderr).to eq <<~TXT
+        error 1
+        error 2
+      TXT
+    end
+  end
+
   describe "clean_bundler_env option" do
     it "allows a clean environment without Bundler variables" do
       expect(ENV["BUNDLE_GEMFILE"]).to_not be_empty
