@@ -31,7 +31,7 @@ module JetBlack
     end
 
     def finalize
-      raw_captured_output.concat([output.read])
+      drain_output
       input.close
       output.close
       Process.waitpid(pid)
@@ -54,5 +54,13 @@ module JetBlack
     attr_accessor :killed, :raw_captured_output
     attr_reader :input, :output, :pid
     attr_writer :exit_status
+
+    def drain_output
+      until output.eof? do
+        raw_captured_output << output.readline
+      end
+    rescue Errno::EIO => e
+      warn("Rescued #{e.message}") if ENV.key?("DEBUG")
+    end
   end
 end
