@@ -11,6 +11,7 @@ with [RSpec] in mind. Features:
 - Synchronously [run commands](#running-commands) then write assertions on:
   - The `stdout` / `stderr` content
   - The exit status of the process
+- Exercise [interactive command line interfaces](#running-interactive-commands)
 - Manipulate files in the temporary directory:
   - [Create files](#file-manipulation)
   - [Create executable files](#file-manipulation)
@@ -83,6 +84,26 @@ Providing `stdin` data:
 ```ruby
 session = JetBlack::Session.new
 session.run("./hello-world", stdin: "Alice")
+```
+
+### Running interactive commands
+
+```ruby
+session = JetBlack::Session.new
+
+result = session.run_interactive("./hello-world") do |terminal|
+  terminal.expect("What's your name?", reply: "Alice")
+  terminal.expect("What's your location?", reply: "Wonderland")
+end
+
+expect(result.exit_status).to eq 0
+expect(result.stdout).to eq <<~TXT
+  What's your name?
+  Alice
+  What's your location?
+  Wonderland
+  Hello Alice in Wonderland
+TXT
 ```
 
 ### File manipulation
