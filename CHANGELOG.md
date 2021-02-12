@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Adds `run_interactive` to allow pseudo-terminal interaction
+
 ## v0.6.0
 
 - Freeze string literals
@@ -25,7 +29,6 @@
 
 - Allows `stdin` data to be provided when running commands
 - Adds `create_executable` to which writes a file and adds execute permission
-- Adds `run_interactive` to allow pseudo-terminal interaction
 
 ## v0.2.0
 
