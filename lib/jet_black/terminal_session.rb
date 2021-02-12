@@ -86,6 +86,7 @@ module JetBlack
     def drain_stderr
       stderr_writer.close
       self.raw_std_err = stderr_reader.read
+      stderr_reader.close
     end
   end
 end

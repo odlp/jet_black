@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Fix file descriptor leak in `run_interactive`
+
 ## v0.7.0
 
 - Adds `run_interactive` to allow pseudo-terminal interaction
