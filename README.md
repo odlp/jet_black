@@ -106,6 +106,18 @@ expect(result.stdout).to eq <<~TXT
 TXT
 ```
 
+If you don't want to wait for a process to finish, you can end the interactive
+session early:
+
+```ruby
+session = JetBlack::Session.new
+
+result = session.run_interactive("./long-cli-flow") do |terminal|
+  terminal.expect("Question 1", reply: "Y")
+  terminal.end_session(signal: "INT")
+end
+```
+
 ### File manipulation
 
 ```ruby
