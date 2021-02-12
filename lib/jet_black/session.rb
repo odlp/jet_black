@@ -3,13 +3,12 @@
 require "bundler"
 require "fileutils"
 require "forwardable"
-require "open3"
 require "tmpdir"
-require_relative "environment"
 require_relative "errors"
 require_relative "executed_command"
 require_relative "file_helper"
-require_relative "terminal_session"
+require_relative "non_interactive_command"
+require_relative "interactive_command"
 
 module JetBlack
   class Session
@@ -28,62 +27,38 @@ module JetBlack
     end
 
     def run(command, stdin: nil, env: {}, options: {})
-      combined_options = session_options.merge(options)
-      executed_command = exec_command(command, stdin, env, combined_options)
-      commands << executed_command
-      executed_command
+      exec_non_interactive(raw_command: command, stdin: stdin, raw_env: env, options: options).tap do |executed_command|
+        commands << executed_command
+      end
     end
 
     def run_interactive(command, options: {}, &block)
-      combined_options = session_options.merge(options)
-
-      executed_command =
-        exec_interactive_command(command, combined_options, block)
-
-      commands << executed_command
-      executed_command
+      exec_interactive(raw_command: command, options: options, block: block).tap do |executed_command|
+        commands << executed_command
+      end
     end
 
     private
 
     attr_reader :session_options, :file_helper
 
-    def exec_command(raw_command, stdin, raw_env, options)
-      env = Environment.new(raw_env).to_h
+    def exec_non_interactive(raw_command:, stdin:, raw_env:, options:)
+      combined_options = session_options.merge(options)
 
-      command_context(options) do
-        stdout, stderr, exit_status =
-          Open3.capture3(env, raw_command, chdir: directory, stdin_data: stdin)
-
-        ExecutedCommand.new(
-          raw_command: raw_command,
-          stdout: stdout,
-          stderr: stderr,
-          exit_status: exit_status,
-        )
+      execution_context(combined_options) do
+        NonInteractiveCommand.new.call(raw_command: raw_command, stdin: stdin, raw_env: raw_env, directory: directory)
       end
     end
 
-    def exec_interactive_command(raw_command, options, block)
-      command_context(options) do
-        terminal = TerminalSession.new(raw_command, directory: directory)
+    def exec_interactive(raw_command:, options:, block:)
+      combined_options = session_options.merge(options)
 
-        unless block.nil?
-          block.call(terminal)
-        end
-
-        terminal.wait_for_finish
-
-        ExecutedCommand.new(
-          raw_command: raw_command,
-          stdout: terminal.stdout,
-          stderr: terminal.stderr,
-          exit_status: terminal.exit_status,
-        )
+      execution_context(combined_options) do
+        InteractiveCommand.new.call(raw_command: raw_command, directory: directory, block: block)
       end
     end
 
-    def command_context(options)
+    def execution_context(options)
       if options[:clean_bundler_env]
         Bundler.public_send(bundler_clean_environment_method) { yield }
       else
