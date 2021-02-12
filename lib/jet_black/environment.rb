@@ -15,9 +15,9 @@ module JetBlack
     attr_reader :raw_env
 
     def stringify_env(env)
-      env.map do |key, value|
-        [key.to_s, value&.to_s]
-      end.to_h
+      env.each_with_object({}) do |(key, value), memo|
+        memo[key.to_s] = value&.to_s
+      end
     end
 
     def apply_path_prefix(env)
