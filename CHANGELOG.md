@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.7.1
 
 - Fix file descriptor leak in `run_interactive`
 
