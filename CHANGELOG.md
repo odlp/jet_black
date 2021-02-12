@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## v0.7.0
 
 - Adds `run_interactive` to allow pseudo-terminal interaction
 
