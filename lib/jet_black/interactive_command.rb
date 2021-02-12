@@ -3,8 +3,9 @@ require_relative "terminal_session"
 
 module JetBlack
   class InteractiveCommand
-    def call(raw_command:, directory:, block:)
-      terminal = TerminalSession.new(raw_command, directory: directory)
+    def call(raw_command:, raw_env:, directory:, block:)
+      env = Environment.new(raw_env).to_h
+      terminal = TerminalSession.new(raw_command, env: env, directory: directory)
 
       unless block.nil?
         block.call(terminal)

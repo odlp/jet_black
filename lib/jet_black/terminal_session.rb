@@ -8,13 +8,13 @@ module JetBlack
 
     attr_reader :exit_status
 
-    def initialize(raw_command, directory:)
+    def initialize(raw_command, env:, directory:)
       @stderr_reader, @stderr_writer = IO.pipe
-      @output, @input, @pid = PTY.spawn(raw_command, chdir: directory, err: stderr_writer.fileno)
+      @output, @input, @pid = PTY.spawn(env, raw_command, chdir: directory, err: stderr_writer.fileno)
       self.raw_stdout = []
     end
 
-    def expect(expected_value, reply:, timeout: DEFAULT_TIMEOUT)
+    def expect(expected_value, reply: nil, timeout: DEFAULT_TIMEOUT)
       output_matches = output.expect(expected_value, timeout)
 
       if output_matches.nil?
@@ -23,7 +23,10 @@ module JetBlack
       end
 
       raw_stdout.concat(output_matches)
-      input.puts(reply)
+
+      if reply != nil
+        input.puts(reply)
+      end
     end
 
     def stdout

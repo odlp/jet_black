@@ -32,8 +32,8 @@ module JetBlack
       end
     end
 
-    def run_interactive(command, options: {}, &block)
-      exec_interactive(raw_command: command, options: options, block: block).tap do |executed_command|
+    def run_interactive(command, env: {}, options: {}, &block)
+      exec_interactive(raw_command: command, raw_env: env, options: options, block: block).tap do |executed_command|
         commands << executed_command
       end
     end
@@ -50,11 +50,11 @@ module JetBlack
       end
     end
 
-    def exec_interactive(raw_command:, options:, block:)
+    def exec_interactive(raw_command:, raw_env:, options:, block:)
       combined_options = session_options.merge(options)
 
       execution_context(combined_options) do
-        InteractiveCommand.new.call(raw_command: raw_command, directory: directory, block: block)
+        InteractiveCommand.new.call(raw_command: raw_command, raw_env: raw_env, directory: directory, block: block)
       end
     end
 

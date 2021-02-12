@@ -3,7 +3,7 @@
 require "jet_black"
 require "support/environment_support"
 
-RSpec.describe JetBlack::Session, "environment" do
+RSpec.describe JetBlack::Session, "environment for #run" do
   include EnvironmentSupport
 
   it "allows overrides without affecting the current process" do
