@@ -14,11 +14,11 @@ module JetBlack
       self.raw_stdout = []
     end
 
-    def expect(expected_value, reply: nil, timeout: DEFAULT_TIMEOUT)
+    def expect(expected_value, reply: nil, timeout: DEFAULT_TIMEOUT, signal_on_timeout: "KILL")
       output_matches = output.expect(expected_value, timeout)
 
       if output_matches.nil?
-        end_session(signal: "KILL")
+        end_session(signal: signal_on_timeout)
         raise TerminalSessionTimeoutError.new(self, expected_value, timeout)
       end
 
