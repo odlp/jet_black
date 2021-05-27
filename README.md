@@ -212,7 +212,7 @@ session.run("bundle exec rake")
 Given the root of your project contains a `bin` directory containing
 `my_awesome_bin`.
 
-Configure the `path_prefix` to the directory containing with your executable(s):
+Configure the `path_prefix` to the directory containing your executable(s):
 
 ```ruby
 # spec/support/jet_black.rb
