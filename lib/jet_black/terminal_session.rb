@@ -1,4 +1,4 @@
-require "pty"
+require "open3"
 require "expect"
 require_relative "errors"
 
@@ -6,50 +6,44 @@ module JetBlack
   class TerminalSession
     DEFAULT_TIMEOUT = 10
 
-    attr_reader :exit_status
+    attr_reader :exit_status, :stderr
 
     def initialize(raw_command, env:, directory:)
-      @stderr_reader, @stderr_writer = IO.pipe
-      @output, @input, @pid = PTY.spawn(env, raw_command, chdir: directory, err: stderr_writer.fileno)
-      self.raw_stdout = []
+      @stdin_io, @stdout_io, @stderr_io, @wait_thr = Open3.popen3(env, raw_command, chdir: directory)
+      @chunked_stdout = []
     end
 
     def expect(expected_value, reply: nil, timeout: DEFAULT_TIMEOUT, signal_on_timeout: "KILL")
-      output_matches = output.expect(expected_value, timeout)
+      output_matches = stdout_io.expect(expected_value, timeout)
 
       if output_matches.nil?
         end_session(signal: signal_on_timeout)
         raise TerminalSessionTimeoutError.new(self, expected_value, timeout)
       end
 
-      raw_stdout.concat(output_matches)
+      chunked_stdout.concat(output_matches)
 
       if reply != nil
-        input.puts(reply)
+        stdin_io.puts(reply)
+        chunked_stdout << ("\n" + reply)
       end
     end
 
     def stdout
-      raw_stdout.join.gsub("\r", "")
-    end
-
-    def stderr
-      raw_std_err
+      @stdout ||= chunked_stdout.join.gsub("\r", "")
     end
 
     def wait_for_finish
       return if finished?
 
       finalize_io
-
-      self.exit_status = wait_for_exit_status
+      @exit_status = wait_for_exit_status
     end
 
     def end_session(signal: "INT")
-      Process.kill(signal, pid)
+      Process.kill(signal, wait_thr.pid)
       finalize_io
-
-      self.exit_status = wait_for_exit_status
+      @exit_status = wait_for_exit_status
     end
 
     def finished?
@@ -58,35 +52,34 @@ module JetBlack
 
     private
 
-    attr_accessor :raw_stdout, :raw_std_err
-    attr_reader :input, :output, :pid, :stderr_reader, :stderr_writer
-    attr_writer :exit_status
+    attr_reader :stdin_io, :stdout_io, :stderr_io, :chunked_stdout, :wait_thr
 
     def finalize_io
+      stdin_io.close
       drain_stdout
       drain_stderr
     end
 
     def wait_for_exit_status
-      _, pty_status = Process.waitpid2(pid)
-      pty_status.exitstatus || pty_status.termsig
+      process_status = wait_thr.value
+      process_status.exitstatus || process_status.termsig
     end
 
     def drain_stdout
-      until output.eof? do
-        raw_stdout << output.readline
+      until stdout_io.eof? do
+        chunked_stdout << stdout_io.readline
       end
-
-      input.close
-      output.close
     rescue Errno::EIO => e # https://github.com/ruby/ruby/blob/57fb2199059cb55b632d093c2e64c8a3c60acfbb/ext/pty/pty.c#L521
+      # TODO: Evaluate if this rescue is still required with Open3.popen3
       warn("Rescued #{e.message}") if ENV.key?("DEBUG")
+    ensure
+      stdout_io.close
     end
 
     def drain_stderr
-      stderr_writer.close
-      self.raw_std_err = stderr_reader.read
-      stderr_reader.close
+      @stderr = stderr_io.read
+    ensure
+      stderr_io.close
     end
   end
 end
