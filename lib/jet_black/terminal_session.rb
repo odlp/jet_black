@@ -69,9 +69,6 @@ module JetBlack
       until stdout_io.eof? do
         chunked_stdout << stdout_io.readline
       end
-    rescue Errno::EIO => e # https://github.com/ruby/ruby/blob/57fb2199059cb55b632d093c2e64c8a3c60acfbb/ext/pty/pty.c#L521
-      # TODO: Evaluate if this rescue is still required with Open3.popen3
-      warn("Rescued #{e.message}") if ENV.key?("DEBUG")
     ensure
       stdout_io.close
     end
