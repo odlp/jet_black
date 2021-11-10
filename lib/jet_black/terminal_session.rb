@@ -5,11 +5,13 @@ require_relative "errors"
 module JetBlack
   class TerminalSession
     DEFAULT_TIMEOUT = 10
+    UNKNOWN_EXIT_STATUS = -1
 
-    attr_reader :exit_status, :stderr
+    attr_reader :exit_status, :stderr, :pid
 
     def initialize(raw_command, env:, directory:)
       @stdin_io, @stdout_io, @stderr_io, @wait_thr = Open3.popen3(env, raw_command, chdir: directory)
+      @pid = wait_thr.pid
       @chunked_stdout = []
     end
 
@@ -41,7 +43,12 @@ module JetBlack
     end
 
     def end_session(signal: "INT")
-      Process.kill(signal, wait_thr.pid)
+      begin
+        Process.kill(signal, pid)
+      rescue Errno::ESRCH
+        warn("WARNING: Process is already dead") if ENV.key?("DEBUG")
+      end
+
       finalize_io
       @exit_status = wait_for_exit_status
     end
@@ -61,8 +68,11 @@ module JetBlack
     end
 
     def wait_for_exit_status
-      process_status = wait_thr.value
-      process_status.exitstatus || process_status.termsig
+      if (process_status = wait_thr.value)
+        process_status.exitstatus || process_status.termsig
+      else
+        UNKNOWN_EXIT_STATUS
+      end
     end
 
     def drain_stdout
