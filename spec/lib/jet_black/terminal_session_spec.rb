@@ -31,6 +31,26 @@ RSpec.describe JetBlack::TerminalSession do
     end
   end
 
+  describe "deadlock prevention" do
+    # From docs - https://ruby-doc.org/stdlib-3.0.0/libdoc/open3/rdoc/Open3.html#method-c-popen3
+    # You should be careful to avoid deadlocks. Since pipes are fixed length buffers,
+    # Open3.popen3(“prog”) {|i, o, e, t| o.read } deadlocks if the program generates too much output on stderr.
+    # You should read stdout and stderr simultaneously (using threads or IO.select).
+
+    it "does not deadlock on large volumes of STDERR and STDOUT output" do
+      command = "ruby -e '1_000.times { |n| puts \"a\" * 100; warn \"z\" * 100 }; puts \"Bye\"'"
+      session = described_class.new(command, env: {}, directory: __dir__)
+      session.expect("Bye")
+
+      session.wait_for_finish
+
+      expect(session.exit_status).to be_zero
+      expect(session.stdout).to include("Bye")
+      expect(session.stdout.count("\n")).to be >= 1_001
+      expect(session.stderr.count("\n")).to be >= 1_000
+    end
+  end
+
   private
 
   def open_file_descriptor_count
