@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- [Internal] Switch `run_interactive` implementation from `PTY.spawn` to `Open3.popen3`
+
 ## v0.7.1
 
 - Fix file descriptor leak in `run_interactive`
