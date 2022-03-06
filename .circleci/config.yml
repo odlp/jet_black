@@ -43,28 +43,24 @@ base_job: &base_job
 #-------------------------------------------------------------------------------
 
 jobs:
-  ruby-2.4:
-    <<: *base_job
-    docker:
-      - image: circleci/ruby:2.4
-  ruby-2.5:
-    <<: *base_job
-    docker:
-      - image: circleci/ruby:2.5
   ruby-2.6:
     <<: *base_job
     docker:
-      - image: circleci/ruby:2.6
+      - image: cimg/ruby:2.6
   ruby-2.7:
     <<: *base_job
     docker:
-      - image: circleci/ruby:2.7
+      - image: cimg/ruby:2.7
     environment:
       ENABLE_COVERAGE: 1
   ruby-3.0:
     <<: *base_job
     docker:
-      - image: circleci/ruby:3.0
+      - image: cimg/ruby:3.0
+  ruby-3.1:
+    <<: *base_job
+    docker:
+      - image: cimg/ruby:3.1
 
 #-------------------------------------------------------------------------------
 
@@ -74,8 +70,7 @@ workflows:
   version: 2
   multiple-rubies:
     jobs:
-      - ruby-2.4
-      - ruby-2.5
       - ruby-2.6
       - ruby-2.7
       - ruby-3.0
+      - ruby-3.1
