@@ -1,6 +1,6 @@
 # JetBlack
 
-[![Gem Version](https://badge.fury.io/rb/jet_black.svg)](https://rubygems.org/gems/jet_black)
+[![Gem Version](https://badge.fury.io/rb/jet_black.svg)](https://rubygems.org/gems/jet_black) [![Coverage Status](https://coveralls.io/repos/github/odlp/jet_black/badge.svg?branch=main)](https://coveralls.io/github/odlp/jet_black?branch=main)
 
 A black-box testing utility for command line tools and gems. Written in Ruby,
 with [RSpec] in mind. Features:
