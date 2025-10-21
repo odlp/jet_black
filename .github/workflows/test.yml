@@ -17,3 +17,8 @@ jobs:
           bundler-cache: true
       - name: RSpec
         run: bundle exec rspec
+      - name: Coveralls
+        uses: coverallsapp/github-action@v2
+        if: ${{ matrix.ruby == '3.4' }}
+        with:
+          format: simplecov

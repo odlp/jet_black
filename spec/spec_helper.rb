@@ -3,19 +3,9 @@
 PROJECT_ROOT = File.expand_path("..", __dir__).freeze
 SPEC_ROOT = File.expand_path(__dir__).freeze
 
-enable_coverage = ENV.key?("ENABLE_COVERAGE")
-enable_coveralls = enable_coverage && ENV.key?("COVERALLS_REPO_TOKEN")
-
-if enable_coverage
-  require "simplecov"
-  SimpleCov.start do
-    add_filter "/spec/"
-  end
-end
-
-if enable_coveralls
-  require "coveralls"
-  Coveralls.wear!
+require "simplecov"
+SimpleCov.start do
+  add_filter "/spec/"
 end
 
 RSpec.configure do |config|
